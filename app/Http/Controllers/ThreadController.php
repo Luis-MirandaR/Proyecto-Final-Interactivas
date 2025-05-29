@@ -8,6 +8,7 @@ use App\Models\Category;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf; 
 
 class ThreadController extends Controller
 {
@@ -16,13 +17,11 @@ class ThreadController extends Controller
      */
     public function index()
     {
-        // Fetch all threads from the database
         $userId = Auth::id();
         $games = Game::all();
         $categories = Category::all();
         $threads = Thread::where('user_id', $userId)->get();
         
-        // Return a view with the threads data
         return view('mythreads', compact('threads', 'games', 'categories'));
     }
 
@@ -50,20 +49,25 @@ class ThreadController extends Controller
             'category_id' => 'required|exists:categories,id'
         ]);
 
-        // Create a new thread
         $thread = new Thread();
         $thread->title = $request->title;
         $thread->content = $request->content;
         $thread->user_id = Auth::id();
-        $thread->game_id = $request->game_id; // Assuming game_id is passed in the request
-        $thread->category_id = $request->category_id; // Assuming category_id is passed in the request
+        $thread->game_id = $request->game_id;
+        $thread->category_id = $request->category_id; 
 
 
-        // Save the thread to the database
         $thread->save();
 
-        // Redirect to the threads index with a success message
+
         return redirect()->route('threads')->with('success', 'Thread created successfully!');
+    }
+
+    public function pdf()
+    {
+    $threads = \App\Models\Thread::all();
+    $pdf = Pdf::loadView('threads_pdf', compact('threads'));
+    return $pdf->download('hilos.pdf');
     }
 
     /**

@@ -19,6 +19,9 @@
                     @if(auth()->user()->isAdmin())
                         <flux:navlist.item :href="route('games')" :current="request()->routeIs('')" wire:navigate><x-icons.game class="w-5 h-5 me-2 inline" /> {{ __('Agregar juego') }}</flux:navlist.item>
                         <flux:navlist.item :href="route('categories')" :current="request()->routeIs('')" wire:navigate><x-icons.category class="w-5 h-5 me-2 inline" /> {{ __('Agregar categoria') }}</flux:navlist.item>
+                        <flux:navlist.item :href="route('threads.pdf')" icon="document" class="text-green-700 font-semibold">
+                        {{ __('Generar PDF de hilos') }}
+                        </flux:navlist.item>
                     @endif
                 </flux:navlist.group>
             </flux:navlist>

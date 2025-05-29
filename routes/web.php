@@ -23,6 +23,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('settings/password', Password::class)->name('settings.password');
     Route::get('settings/appearance', Appearance::class)->name('settings.appearance');
 
+    Route::get('threads/pdf', [\App\Http\Controllers\ThreadController::class, 'pdf'])->name('threads.pdf');
+
     Route::get('suscribedthreads', [\App\Http\Controllers\SuscribedThreadsController::class, 'index'])->name('suscribed_threads');
     Route::post('suscribedthreads', [\App\Http\Controllers\SuscribedThreadsController::class, 'store'])->name('suscribed_threads.store');
 
