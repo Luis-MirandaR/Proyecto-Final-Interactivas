@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Thread;
+use App\Models\Game;
+use App\Models\Category;
+
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ThreadController extends Controller
 {
@@ -12,7 +16,14 @@ class ThreadController extends Controller
      */
     public function index()
     {
-        //
+        // Fetch all threads from the database
+        $userId = Auth::id();
+        $games = Game::all();
+        $categories = Category::all();
+        $threads = Thread::where('user_id', $userId)->get();
+        
+        // Return a view with the threads data
+        return view('mythreads', compact('threads', 'games', 'categories'));
     }
 
     /**
@@ -20,7 +31,9 @@ class ThreadController extends Controller
      */
     public function create()
     {
-        //
+        $games = Game::all();
+        $categories = Category::all();
+        return view('createthread', compact('games', 'categories'));
     }
 
     /**
@@ -28,7 +41,30 @@ class ThreadController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // Validate the request data
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        // Create a new thread
+        $thread = new Thread();
+        $thread->title = $request->title;
+        $thread->content = $request->content;
+        $thread->user_id = Auth::id();
+        
+        // Handle image upload if present
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('images', 'public');
+            $thread->image = $path;
+        }
+
+        // Save the thread to the database
+        $thread->save();
+
+        // Redirect to the threads index with a success message
+        return redirect()->route('threads')->with('success', 'Thread created successfully!');
     }
 
     /**

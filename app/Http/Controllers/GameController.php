@@ -13,6 +13,8 @@ class GameController extends Controller
     public function index()
     {
         //
+        $games = Game::all();
+        return view('games', compact('games'));
     }
 
     /**
@@ -20,7 +22,7 @@ class GameController extends Controller
      */
     public function create()
     {
-        //
+        return view('creategame');
     }
 
     /**
@@ -29,6 +31,23 @@ class GameController extends Controller
     public function store(Request $request)
     {
         //
+        try{
+            $request->validate([
+            'name' => 'required|string|max:255|unique:games,name',
+            'genre' => 'required|string',
+            'image_url' => 'nullable|url',
+            ]);
+
+            $game = new Game();
+            $game->name = $request->name;
+            $game->genre = $request->genre;
+            $game->image_url = $request->image_url;
+        
+            $game->save();
+            return redirect()->route('games')->with('success', 'Game created successfully.');
+        }catch(\Exception $e){
+            return redirect()->back()->with('error', 'Error creating game: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -45,6 +64,7 @@ class GameController extends Controller
     public function edit(Game $game)
     {
         //
+        return view('editgame', compact('game'));
     }
 
     /**
@@ -53,6 +73,22 @@ class GameController extends Controller
     public function update(Request $request, Game $game)
     {
         //
+        try {
+            $request->validate([
+                'name' => 'required|string|max:255|unique:games,name,' . $game->id,
+                'genre' => 'required|string',
+                'image_url' => 'nullable|url',
+            ]);
+
+            $game->name = $request->name;
+            $game->genre = $request->genre;
+            $game->image_url = $request->image_url;
+
+            $game->save();
+            return redirect()->route('games')->with('success', 'Game updated successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error updating game: ' . $e->getMessage());
+        }
     }
 
     /**

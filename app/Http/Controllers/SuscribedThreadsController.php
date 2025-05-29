@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\SuscribedThreads;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class SuscribedThreadsController extends Controller
@@ -13,6 +14,9 @@ class SuscribedThreadsController extends Controller
     public function index()
     {
         //
+        $userId = Auth::id();
+        $suscribedThreads = SuscribedThreads::where('user_id', $userId)->get();
+        return view('suscribed_threads', compact('suscribedThreads'));
     }
 
     /**

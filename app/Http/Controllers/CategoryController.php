@@ -12,7 +12,8 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        $categories = Category::all();
+        return view('categories', compact('categories'));
     }
 
     /**
@@ -20,7 +21,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        //
+        return view('createcategory');
     }
 
     /**
@@ -28,38 +29,32 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
+        try{
+            // Validate the request data
+            $request->validate([
+            'name' => 'required|string|max:255|unique:categories,name',
+            ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Category $category)
-    {
-        //
-    }
+            // Create a new category
+            $category = new Category();
+            $category->name = $request->name;
+            $category->save();
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Category $category)
-    {
-        //
+            // Redirect to categories index with success message
+            return redirect()->route('categories')->with('success', 'Category created successfully.');
+        }catch(\Exception $e){
+            return redirect()->back()->with('error', 'An error occurred while creating the category: ' . $e->getMessage());
+        }
     }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Category $category)
-    {
-        //
-    }
-
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Category $category)
     {
-        //
+        // Delete the category
+        $category->delete();
+
+        // Redirect to categories index with success message
+        return redirect()->route('categories')->with('success', 'Category deleted successfully.');
     }
 }

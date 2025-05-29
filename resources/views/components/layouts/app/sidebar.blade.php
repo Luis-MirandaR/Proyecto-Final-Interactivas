@@ -13,21 +13,17 @@
 
             <flux:navlist variant="outline">
                 <flux:navlist.group :heading="__('Platform')" class="grid">
-                    <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
+                    <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Inicio') }}</flux:navlist.item>
+                    <flux:navlist.item :href="route('threads')" :current="request()->routeIs('threads')" wire:navigate><x-icons.threads class="w-5 h-5 me-2 inline text-zinc-500" /> {{ __('Mis Hilos') }}</flux:navlist.item>
+                    <flux:navlist.item :href="route('suscribed_threads')" :current="request()->routeIs('suscribed_threads')" wire:navigate><x-icons.subscribe class="w-5 h-5 me-2 inline" /> {{ __('Hilos que sigo') }}</flux:navlist.item>
+                    @if(auth()->user()->isAdmin())
+                        <flux:navlist.item :href="route('games')" :current="request()->routeIs('')" wire:navigate><x-icons.game class="w-5 h-5 me-2 inline" /> {{ __('Agregar juego') }}</flux:navlist.item>
+                        <flux:navlist.item :href="route('categories')" :current="request()->routeIs('')" wire:navigate><x-icons.category class="w-5 h-5 me-2 inline" /> {{ __('Agregar categoria') }}</flux:navlist.item>
+                    @endif
                 </flux:navlist.group>
             </flux:navlist>
 
             <flux:spacer />
-
-            <flux:navlist variant="outline">
-                <flux:navlist.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
-                {{ __('Repository') }}
-                </flux:navlist.item>
-
-                <flux:navlist.item icon="book-open-text" href="https://laravel.com/docs/starter-kits#livewire" target="_blank">
-                {{ __('Documentation') }}
-                </flux:navlist.item>
-            </flux:navlist>
 
             <!-- Desktop User Menu -->
             <flux:dropdown position="bottom" align="start">
