@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\SuscribedThreads;
+use App\Models\Thread;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -16,7 +17,8 @@ class SuscribedThreadsController extends Controller
         //
         $userId = Auth::id();
         $suscribedThreads = SuscribedThreads::where('user_id', $userId)->get();
-        return view('suscribed_threads', compact('suscribedThreads'));
+        $threads = Thread::whereIn('id', $suscribedThreads->pluck('thread_id'))->get();
+        return view('suscribed_threads', compact('threads'));
     }
 
     /**
@@ -33,6 +35,17 @@ class SuscribedThreadsController extends Controller
     public function store(Request $request)
     {
         //
+        try {
+            $suscribedThread = new SuscribedThreads();
+            $suscribedThread->user_id = Auth::id();
+            $suscribedThread->thread_id = $request->thread_id;
+            $suscribedThread->save();
+
+
+            return redirect()->route('suscribed_threads')->with('success', 'Successfully subscribed to the thread.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'An error occurred while subscribing to the thread: ' . $e->getMessage());
+        }
     }
 
     /**

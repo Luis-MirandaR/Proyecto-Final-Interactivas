@@ -46,6 +46,8 @@ class ThreadController extends Controller
             'title' => 'required|string|max:255',
             'content' => 'required|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'game_id' => 'required|exists:games,id',
+            'category_id' => 'required|exists:categories,id'
         ]);
 
         // Create a new thread
@@ -53,12 +55,9 @@ class ThreadController extends Controller
         $thread->title = $request->title;
         $thread->content = $request->content;
         $thread->user_id = Auth::id();
-        
-        // Handle image upload if present
-        if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('images', 'public');
-            $thread->image = $path;
-        }
+        $thread->game_id = $request->game_id; // Assuming game_id is passed in the request
+        $thread->category_id = $request->category_id; // Assuming category_id is passed in the request
+
 
         // Save the thread to the database
         $thread->save();
@@ -73,6 +72,7 @@ class ThreadController extends Controller
     public function show(Thread $thread)
     {
         //
+        return view('thread', compact('thread'));
     }
 
     /**
